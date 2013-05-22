@@ -79,7 +79,7 @@ GType gst_swcsc_get_type(void)
         GST_DEBUG_CATEGORY_INIT(gst_swcsc_debug, 
             "swcsc", 0, " Image colorspace");
 
-        GST_LOG("initialized get_type\n");
+        //GST_LOG("initialized get_type\n");
     }
 
     return object_type;
@@ -147,7 +147,7 @@ static void gst_swcsc_class_init(GstSwcscClass
       GST_DEBUG_FUNCPTR (gst_transform_event);
     parent_class = g_type_class_peek_parent (klass);
 
-    GST_LOG("initialized class init\n");
+    //GST_LOG("initialized class init\n");
 }
 
 static void _convert_420psemi_to_420p (unsigned char * lBuffPtr, unsigned char * cBuffPtr,
@@ -202,14 +202,14 @@ static GstFlowReturn gst_swcsc_transform (GstBaseTransform *trans,
 {
     GstSwcsc *self = GST_SWCSC (trans);
 
-    GST_LOG("begin transform\n");
+    //GST_LOG("begin transform\n");
  
     convert_420psemi_to_420p(GST_BUFFER_DATA(src), self->crop_left, self->crop_top, self->width, self->height, 
         GST_BUFFER_SIZE(src), GST_BUFFER_DATA(dst));
 
     gst_buffer_set_data (dst, GST_BUFFER_DATA(dst), self->width * self->height * 1.5);
 
-    GST_LOG("end transform\n");
+    //GST_LOG("end transform\n");
     return GST_FLOW_OK;
 }
 
@@ -221,8 +221,8 @@ static GstCaps * gst_swcsc_transform_caps (GstBaseTransform
     GstPad *other;
     const GstCaps *templ;
 
-    GST_LOG("begin transform caps (%s)\n",
-        direction==GST_PAD_SRC ? "src" : "sink");
+    /*GST_LOG("begin transform caps (%s)\n",
+        direction==GST_PAD_SRC ? "src" : "sink");*/
 
     swcsc   = GST_SWCSC(trans);
     g_return_val_if_fail(from != NULL, NULL);
@@ -233,8 +233,8 @@ static GstCaps * gst_swcsc_transform_caps (GstBaseTransform
     result = gst_caps_copy(templ);
 
 
-    GST_LOG("returing cap %" GST_PTR_FORMAT, result);
-    GST_LOG("end transform caps\n");
+    //GST_LOG("returing cap %" GST_PTR_FORMAT, result);
+    //GST_LOG("end transform caps\n");
 
     return result;
 }
@@ -246,11 +246,11 @@ static gboolean gst_swcsc_set_caps (GstBaseTransform *trans,
     gboolean            ret         = TRUE;
     GstVideoFormat in_format;
 
-    GST_LOG("begin set caps\n");
+    //GST_LOG("begin set caps\n");
 
     gst_video_format_parse_caps (in, &in_format, &self->width, &self->height);
 
-    GST_LOG("end set caps\n");
+    //GST_LOG("end set caps\n");
     return ret;
 }
 
@@ -263,7 +263,7 @@ static void gst_swcsc_fixate_caps (GstBaseTransform *trans,
 
     g_return_if_fail(gst_caps_is_fixed(caps));
 
-    GST_LOG("begin fixating cap\n");
+    //GST_LOG("begin fixating cap\n");
 
     ret = gst_video_format_parse_caps(caps, NULL, &width, &height);
     if (!ret) 
@@ -279,12 +279,12 @@ static void gst_swcsc_fixate_caps (GstBaseTransform *trans,
     gst_structure_fixate_field_nearest_fraction (outs, "framerate", 
         framerateNum, framerateDen);
 
-    GST_LOG("end fixating cap\n");
+    //GST_LOG("end fixating cap\n");
 }
 
 static gboolean gst_swcsc_exit_colorspace(GstSwcsc *swcsc)
 {
-    GST_LOG("begin exit_video\n");
+    //GST_LOG("begin exit_video\n");
 
     return TRUE;
 }

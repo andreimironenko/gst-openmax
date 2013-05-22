@@ -32,6 +32,9 @@ gst-launch -v filesrc location=sample.wmv ! asfdemux name=demux demux.video_00 !
 # pipeline to scale the decoded video to 720P using omx_scaler element
 gst-launch filesrc location=sample.264 ! typefind ! h264parse access-unit=true ! omx_h264dec ! omx_scaler ! 'video/x-raw-yuv,width=1280,height=720' ! omx_ctrl display-mode=OMX_DC_MODE_1080P_60 ! gstperf ! omx_videosink sync=false -v 
 
+# pipeline to crop the decoded video to using omx_scaler element
+gst-launch -v filesrc location=/usr/share/ti/data/videos/dm816x_1080p_demo.264  ! 'video/x-h264' ! h264parse access-unit=true ! omx_h264dec ! omx_scaler cropstartx=0 cropstarty=0 cropwidth=960 cropheight=540 ! 'video/x-raw-yuv,width=960,height=540' ! omx_ctrl display-mode=OMX_DC_MODE_1080P_60 ! gstperf ! omx_videosink
+
 # play mp4 using playbin2
 gst-launch playbin2 uri=file:///home/root/sample.mp4 -v 
 

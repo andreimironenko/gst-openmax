@@ -168,7 +168,7 @@ initialize_port (GstOmxBaseFilter *omx_base)
 #if 1 
     width = self->extendedParams.width;
     height = self->extendedParams.height;
-	printf("Width :%d, Height: %d\n",width,height);
+	
     GST_DEBUG_OBJECT (self, "G_OMX_PORT_GET_DEFINITION (output)");
     G_OMX_PORT_GET_DEFINITION (omx_base->in_port, &pInPortDef);
     pInPortDef.nPortIndex = 0;

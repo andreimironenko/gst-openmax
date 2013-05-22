@@ -55,18 +55,18 @@ static void gst_omxbuffertransport_log_init(void)
 
 static void gst_omxbuffertransport_init(GstOmxBufferTransport *self)
 {
-    GST_LOG("begin\n");
+	//GST_LOG_OBJECT (self, "begin"); 
 
     self->omxbuffer = NULL;
     self->portptr = NULL;
 
-    GST_LOG("end\n");
+    //GST_LOG_OBJECT (self, "end");
 }
 
 static void gst_omxbuffertransport_class_init(
                 GstOmxBufferTransportClass *klass)
 {
-    GST_LOG("begin\n");
+    //GST_LOG("begin\n");
 
     parent_class = g_type_class_peek_parent(klass);
 
@@ -76,7 +76,7 @@ static void gst_omxbuffertransport_class_init(
     klass->derived_methods.mini_object_class.finalize =
         (GstMiniObjectFinalizeFunction) gst_omxbuffertransport_finalize;
 
-    GST_LOG("end class_init\n");
+    //GST_LOG("end class_init\n");
 }
 
 static void
@@ -85,13 +85,15 @@ release_buffer (GOmxPort *port, OMX_BUFFERHEADERTYPE *omx_buffer)
     switch (port->type)
     {
         case GOMX_PORT_INPUT:
-            GST_LOG ("ETB: omx_buffer=%p, pAppPrivate=%p, pBuffer=%p",
-                    omx_buffer, omx_buffer ? omx_buffer->pAppPrivate : 0, omx_buffer ? omx_buffer->pBuffer : 0);
+			
+            /*GST_LOG_OBJECT(port,"ETB: omx_buffer=%p, pAppPrivate=%p, pBuffer=%p",
+                    omx_buffer, omx_buffer ? omx_buffer->pAppPrivate : 0, omx_buffer ? omx_buffer->pBuffer : 0);*/
+					
             OMX_EmptyThisBuffer (port->core->omx_handle, omx_buffer);
             break;
         case GOMX_PORT_OUTPUT:
-            GST_LOG ("FTB: omx_buffer=%p, pAppPrivate=%p, pBuffer=%p",
-                    omx_buffer, omx_buffer ? omx_buffer->pAppPrivate : 0, omx_buffer ? omx_buffer->pBuffer : 0);
+            /*GST_LOG_OBJECT(port,"FTB: omx_buffer=%p, pAppPrivate=%p, pBuffer=%p",
+                    omx_buffer, omx_buffer ? omx_buffer->pAppPrivate : 0, omx_buffer ? omx_buffer->pBuffer : 0);*/
             OMX_FillThisBuffer (port->core->omx_handle, omx_buffer);
             break;
         default:
@@ -104,7 +106,7 @@ static void gst_omxbuffertransport_finalize(GstBuffer *gstbuffer)
 {
     GstOmxBufferTransport *self = GST_OMXBUFFERTRANSPORT(gstbuffer);
     int ii;
-    GST_LOG("begin\n"); 
+    //GST_LOG("begin\n"); 
 	static guint64 beftime = 0;
 
 	gst_omxportptr_mutex_lock(self->portptr);
@@ -150,7 +152,7 @@ static void gst_omxbuffertransport_finalize(GstBuffer *gstbuffer)
     GST_BUFFER_CLASS(parent_class)->
         mini_object_class.finalize(GST_MINI_OBJECT(gstbuffer));
 
-    GST_LOG("end finalize\n");
+    //GST_LOG("end finalize\n");
 }
 
 GstBuffer* gst_omxbuffertransport_new (GOmxPort *port, OMX_BUFFERHEADERTYPE *buffer)
@@ -179,7 +181,7 @@ GstBuffer* gst_omxbuffertransport_new (GOmxPort *port, OMX_BUFFERHEADERTYPE *buf
 	tdt_buf->parent = NULL;
 	tdt_buf->bufSem   = NULL;
 
-    GST_LOG("end new\n");
+    //GST_LOG("end new\n");
 
     return GST_BUFFER(tdt_buf);
 }
@@ -210,7 +212,7 @@ GstBuffer* gst_omxbuffertransport_clone (GstBuffer *parent, GOmxPort *port)
 	tdt_buf->bufSem    = NULL;
 	tdt_buf->parent = parent;
 
-    GST_LOG("end new\n");
+    //GST_LOG("end new\n");
 
     return GST_BUFFER(tdt_buf);
     

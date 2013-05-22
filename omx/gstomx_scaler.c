@@ -220,11 +220,24 @@ omx_setup (GstOmxBaseFilter *omx_base)
     chResolution.Frm1Width = 0;
     chResolution.Frm1Height = 0;
     chResolution.Frm1Pitch = 0;
-    chResolution.FrmStartX = 0;
-    chResolution.FrmStartY = 0;
-    chResolution.FrmCropWidth = 0;
-    chResolution.FrmCropHeight = 0;
-    chResolution.eDir = OMX_DirInput;
+    
+	/* Added Cropping Support */
+	chResolution.FrmStartX = (GST_OMX_SCALER(self))->CropStartX;
+	chResolution.FrmStartY = (GST_OMX_SCALER(self))->CropStartY;
+	chResolution.FrmCropWidth = (GST_OMX_SCALER(self))->CropWidth;
+    chResolution.FrmCropHeight = (GST_OMX_SCALER(self))->CropHeight;
+
+	if((chResolution.FrmStartX + chResolution.FrmCropWidth) > self->in_width)
+	{
+		chResolution.FrmStartX = 0;
+	}
+
+	if((chResolution.FrmStartY + chResolution.FrmCropHeight) > self->in_height)
+	{
+		chResolution.FrmStartY = 0;
+	}
+
+	chResolution.eDir = OMX_DirInput;
     chResolution.nChId = 0;
     err = OMX_SetConfig (gomx->omx_handle, OMX_TI_IndexConfigVidChResolution, &chResolution);
 
@@ -263,10 +276,100 @@ omx_setup (GstOmxBaseFilter *omx_base)
         return;
 }
 
+enum
+{
+    ARG_0,
+    ARG_CROP_START_X,
+	ARG_CROP_START_Y,
+	ARG_CROP_WIDTH,
+	ARG_CROP_HEIGHT,
+};
+
+static void
+set_property (GObject *obj,
+              guint prop_id,
+              const GValue *value,
+              GParamSpec *pspec)
+{
+    switch (prop_id)
+    {
+        case ARG_CROP_START_X:
+            (GST_OMX_SCALER(obj))->CropStartX = g_value_get_uint (value);												
+            break;
+		case ARG_CROP_START_Y:
+            (GST_OMX_SCALER(obj))->CropStartY = g_value_get_uint (value);			
+			break;
+		case ARG_CROP_WIDTH:
+            (GST_OMX_SCALER(obj))->CropWidth = g_value_get_uint (value);			
+			break;
+		case ARG_CROP_HEIGHT:
+            (GST_OMX_SCALER(obj))->CropHeight = g_value_get_uint (value);			
+			break;
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID (obj, prop_id, pspec);
+            break;
+    }
+}
+
+static void
+get_property (GObject *obj,
+              guint prop_id,
+              GValue *value,
+              GParamSpec *pspec)
+{
+    switch (prop_id)
+    {
+        case ARG_CROP_START_X:
+            g_value_set_uint (value, (GST_OMX_SCALER(obj))->CropStartX);			
+            break;
+		case ARG_CROP_START_Y:
+            g_value_set_uint (value, (GST_OMX_SCALER(obj))->CropStartY);			
+            break;
+		case ARG_CROP_WIDTH:
+            g_value_set_uint (value, (GST_OMX_SCALER(obj))->CropWidth);			
+            break;
+		case ARG_CROP_HEIGHT:
+            g_value_set_uint (value, (GST_OMX_SCALER(obj))->CropHeight);			
+            break;
+		
+        default:
+            G_OBJECT_WARN_INVALID_PROPERTY_ID (obj, prop_id, pspec);
+            break;
+    }
+}
+
+
 static void
 type_class_init (gpointer g_class,
                  gpointer class_data)
 {
+	GObjectClass *gobject_class;
+
+	gobject_class = G_OBJECT_CLASS (g_class);
+	gobject_class->set_property = set_property;
+	gobject_class->get_property = get_property;
+
+	g_object_class_install_property (gobject_class, ARG_CROP_START_X,
+			g_param_spec_uint ("cropstartx", "Crop X coordinate",
+				"Crop start X coordinate",
+				0, 1920, 0, G_PARAM_READWRITE));
+
+	g_object_class_install_property (gobject_class, ARG_CROP_START_Y,
+			g_param_spec_uint ("cropstarty", "Crop Y coordinate",
+				"Crop start Y coordinate",
+				0, 1080, 0, G_PARAM_READWRITE));
+
+	g_object_class_install_property (gobject_class, ARG_CROP_WIDTH,
+			g_param_spec_uint ("cropwidth", "Crop Width",
+				"Crop Width ",
+				0, 1920, 0, G_PARAM_READWRITE));
+
+	g_object_class_install_property (gobject_class, ARG_CROP_HEIGHT,
+			g_param_spec_uint ("cropheight", "Crop Height",
+				"Crop Height ",
+				0, 1080, 0, G_PARAM_READWRITE));
+
+	
 }
 
 static void
@@ -279,5 +382,10 @@ type_instance_init (GTypeInstance *instance,
 
     self->omx_setup = omx_setup;
     g_object_set (self, "port-index", 0, NULL);
+	g_object_set (self, "cropstartx", 0, NULL);
+	g_object_set (self, "cropstarty", 0, NULL);
+	g_object_set (self, "cropwidth",  0, NULL);
+	g_object_set (self, "cropheight", 0, NULL);
+
 }
 

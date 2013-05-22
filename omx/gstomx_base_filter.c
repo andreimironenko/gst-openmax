@@ -568,7 +568,7 @@ pad_chain (GstPad *pad,
     GstOmxBaseFilter *self;
     GstFlowReturn ret = GST_FLOW_OK;
 
-    self = GST_OMX_BASE_FILTER (GST_OBJECT_PARENT (pad));
+    self = GST_OMX_BASE_FILTER (GST_OBJECT_PARENT (pad));	
 
     //printf("INput!!\n");
     PRINT_BUFFER (self, buf);
@@ -874,7 +874,7 @@ buffer_alloc (GOmxPort *port, gint len)
         }
         else
         {
-            GST_LOG_OBJECT (self, "caps already fixed: %" GST_PTR_FORMAT, caps);
+            //GST_LOG_OBJECT (self, "caps already fixed: %" GST_PTR_FORMAT, caps);
             gst_caps_unref (caps);
         }
     }
